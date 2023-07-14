@@ -94,7 +94,6 @@ function ProviderInternal({ children, options = {} }) {
         }
     }, [ resource, queryFunction ])
 
-    // logger.debug(`ethos useQuery - ${resource} cachedData`, cachedData)
     const { data: { data, error: dataError } = {}, isError, isFetching, isRefetching } = useQuery(
         [{ cardId, cardPrefix, resource, ...queryKeys }],
         wrappedQueryFunction,
@@ -119,13 +118,16 @@ function ProviderInternal({ children, options = {} }) {
     useEffect(() => {
         if (cardId) {
             if (cacheType === cacheTypes.SDK) {
-                const { data } = getItem({ key: buildKey(cacheKey, queryKeys), scope: cardId }) || {};
-                if (data) {
-                    setCachedData(data);
-                }
+                (async () => {
+                    let { data } = await Promise.resolve(getItem({ key: buildKey(cacheKey, queryKeys), scope: cardId })) || {};
+                    logger.debug('data', data, typeof data, JSON.stringify(data));
+                    if (data) {
+                        setCachedData(data);
+                    }
+                })();
             }
         }
-    }, [ cacheType, cardId, queryKeys ]);
+    }, [ cacheType, cardId, getItem, queryKeys ]);
 
 
     useEffect(() => {
@@ -139,7 +141,7 @@ function ProviderInternal({ children, options = {} }) {
             // refresh has completed
             setIsRefreshing(false);
         }
-    }, [ cacheKey, data, isRefetching, isRefreshing, queryKeys ]);
+    }, [ cacheKey, data, isRefetching, isRefreshing, queryKeys, storeItem ]);
 
     const stateContext = useMemo(() => {
         return {
