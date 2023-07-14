@@ -120,7 +120,6 @@ function ProviderInternal({ children, options = {} }) {
             if (cacheType === cacheTypes.SDK) {
                 (async () => {
                     let { data } = await Promise.resolve(getItem({ key: buildKey(cacheKey, queryKeys), scope: cardId })) || {};
-                    logger.debug('data', data, typeof data, JSON.stringify(data));
                     if (data) {
                         setCachedData(data);
                     }
@@ -166,7 +165,6 @@ function ProviderInternal({ children, options = {} }) {
     ]);
 
     const dataContext = useMemo(() => {
-        // logger.debug(`new Context - ${resource}:`, JSON.stringify(data));
         return {
             data: data || cachedData,
             dataError
