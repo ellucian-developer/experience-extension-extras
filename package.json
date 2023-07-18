@@ -1,25 +1,18 @@
 {
   "name": "@ellucian/experience-extension-extras",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Experience Extension extra Components and utilities",
   "license": "Apache-2.0",
   "engines": {
     "node": ">=18.0.0",
     "npm": ">=8.3.0"
   },
-  "main": "prod/index.js",
+  "main": "lib/index.js",
   "files": [
-    "dev",
-    "prod"
+    "lib"
   ],
   "scripts": {
-    "build": "run-s build-dev build-prod",
-    "build-dev": "run-s clean-dev build-src-dev",
-    "build-src-dev": "BABEL_ENV=development NODE_ENV=development ES6=true babel src/ --out-dir dev",
-    "build-prod": "run-s clean-prod build-src-prod",
-    "build-src-prod": "BABEL_ENV=production NODE_ENV=production ES6=true babel src/ --out-dir prod",
-    "clean-dev": "rimraf ./dev",
-    "clean-prod": "rimraf ./prod"
+    "build": "webpack --progress"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.29.5",
@@ -39,9 +32,11 @@
     "@babel/preset-react": "7.12.1",
     "@babel/runtime": "7.12.1",
     "babel-loader": "8.2.5",
+    "clean-webpack-plugin": "^4.0.0",
     "eslint": "^8.32.0",
-    "npm-run-all": "^4.1.5",
-    "rimraf": "^5.0.1"
+    "webpack": "5.76.1",
+    "webpack-cli": "4.10.0",
+    "webpack-node-externals": "^3.0.0"
   },
   "peerDependencies": {
     "@ellucian/experience-extension-utils": "https://cdn.elluciancloud.com/assets/SDK/utils/1.0.0/ellucian-experience-extension-utils-1.0.0.tgz",
