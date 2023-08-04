@@ -59,7 +59,7 @@ function ProviderInternal({ children, options = {} }) {
         contextsByResource[resource] = context;
 
         return context;
-    }, []);
+    }, [ resource ]);
 
     const cacheKey = useMemo(() => `ethos-${resource}`, []);
     const inPreviewMode = cardPrefix === 'preview:';
@@ -157,6 +157,7 @@ function ProviderInternal({ children, options = {} }) {
         isFetching,
         isRefreshing,
         loadTimes,
+        resource,
         setEnabled,
         setIsRefreshing,
         setQueryFunction,
