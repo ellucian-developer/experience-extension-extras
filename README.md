@@ -111,6 +111,8 @@ This hook provides the data and state values for the data query<br/>
 
 **isRefreshing**: Denotes the query function is currently re-fetching data.
 
+**refresh**: Function the forces a refresh of the data.
+
 **setEnabled**: This function expects a boolean value to turn the fetching of data on or off as described in the options for [DataQueryProvider](#data-query-provider)
 
 **setQueryFunction**: This function expects a function reference as described in the options for [DataQueryProvider](#data-query-provider)
