@@ -10,7 +10,7 @@ import { useData, useCache, useCardInfo } from '@ellucian/experience-extension-u
 import log from 'loglevel';
 const logger = log.getLogger('default');
 
-const contextsByResource = {};
+const contextsByKey = {};
 
 const queryClient = new QueryClient();
 
@@ -56,7 +56,10 @@ function ProviderInternal({ children, options = {} }) {
     const DataQueryContext = useMemo(() => {
         const context = createContext({});
 
-        contextsByResource[resource] = context;
+        const { queryId } = queryKeys;
+        let key = queryId ? `${resource}:${queryId}` : resource;
+
+        contextsByKey[key] = context;
 
         return context;
     }, [ resource ]);
@@ -199,17 +202,25 @@ export function DataQueryProvider(props) {
     )
 }
 
-export function useDataQuery(resource) {
+export function useDataQuery(parameter) {
+    let queryId, resource
+    if (typeof parameter === 'string') {
+        resource = parameter
+    } else if (typeof parameter === 'string') {
+        ({ queryId, resource } = parameter);
+    }
+
     if (!resource) {
         const message = 'useDataQuery requires a resource';
         console.error(message);
         throw new Error(message);
     }
 
-    const context = contextsByResource[resource];
+    let key = queryId ? `${resource}:${queryId}` : resource;
+    context = contextsByKey[key];
 
     if (!context) {
-        const message = `useDataQuery encountered an unknown resource: ${resource}\nPerhaps you didn't wrap with the <DataQueryProvider>`;
+        const message = `useDataQuery encountered an unknown resource key: ${key}\nPerhaps you didn't wrap with the <DataQueryProvider>`;
         console.error(message);
         throw new Error(message);
     }
