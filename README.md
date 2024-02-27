@@ -14,6 +14,7 @@ npm install git+https://github.com/ellucian-developer/experience-extension-extra
 ## Components and Hooks
 
 - [Data Query Provider](#data-query-provider)
+- [Multi Data Query Provider](#multi-data-query-provider)
 - [useDataQuery Hook](#useDataQuery-hook)
 
 ### Data Query Provider
@@ -95,6 +96,48 @@ The options:
 
 **resource**: resource is a key, but more importantly, this can be used as the Ethos resource when using the provided query functions userTokenDataConnectQuery, userTokenBusinessProcessQuery or experienceTokenQuery.
 
+### Multi Data Query Provider
+
+When dealing with multiple API calls, the conventional approach involves nesting several Data Query Providers within one another. While suitable for a limited number of queries, this approach becomes cumbersome and leads to code complexity when dealing with numerous API calls. 
+
+In order to mitigate this issue, we have introduced the Multi Data Query Provider. This  component accepts an array of Data Query Provider options, internally orchestrating the invocation of the same Data Query Provider logic. This streamlines the code structure, offering a cleaner and more scalable solution for managing multiple API calls within the application.
+
+```
+import { MultiDataQueryProvider, experienceTokenQuery, useDataQuery } from '@ellucian/experience-extension-extras';
+...
+function AccountDetails({classes}) {
+    const { data } = useDataQuery('account-detail-reviews');
+    ...
+}
+
+function AccountDetailsWithProviders() {
+    const {
+        configuration: {
+            serviceUrl
+        } = {}
+     } = useCardInfo();
+
+    const options = {
+        queryFunction: experienceTokenQuery,
+    };
+
+    const config = [
+        { ...options, resource: 'account-detail-reviews' },
+        { ...options, resource: 'account-detail-deposits' },
+        { ...options, resource: 'account-detail-memos' }
+    ]
+
+    return (
+        <MultiDataQueryProvider options={config}>
+            <AccountDetails/>
+        </MultiDataQueryProvider>
+    )
+}
+
+export default withIntl(AccountDetailsWithProviders);
+```
+
+
 ### useDataQuery Hook
 
 This hook provides the data and state values for the data query<br/>
@@ -111,6 +154,8 @@ This hook provides the data and state values for the data query<br/>
 
 **isRefreshing**: Denotes the query function is currently re-fetching data.
 
+**refresh**: Function the forces a refresh of the data.
+
 **setEnabled**: This function expects a boolean value to turn the fetching of data on or off as described in the options for [DataQueryProvider](#data-query-provider)
 
 **setQueryFunction**: This function expects a function reference as described in the options for [DataQueryProvider](#data-query-provider)
@@ -121,9 +166,16 @@ This hook provides the data and state values for the data query<br/>
 
 ## Data Query Functions
 
-- [Experience Token Query](#experience-token-query)
-- [User Token Business Process Query](#user-token-business-process-query)
-- [User Token Data Connect Query](#user-token-data-connect-query)
+- [Experience Extension Extras](#experience-extension-extras)
+  - [Install](#install)
+  - [Components and Hooks](#components-and-hooks)
+    - [Data Query Provider](#data-query-provider)
+    - [Multi Data Query Provider](#multi-data-query-provider)
+    - [useDataQuery Hook](#usedataquery-hook)
+  - [Data Query Functions](#data-query-functions)
+    - [Experience Token Query](#experience-token-query)
+    - [User Token Business Process Query](#user-token-business-process-query)
+    - [User Token Data Connect Query](#user-token-data-connect-query)
 
 ### Experience Token Query
 

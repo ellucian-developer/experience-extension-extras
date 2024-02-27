@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 
-import { useData, useCache, useCardInfo } from '@ellucian/experience-extension-utils';
+import { useCache, useCardInfo, useData } from '@ellucian/experience-extension-utils';
 
 import log from 'loglevel';
 const logger = log.getLogger('default');
@@ -62,21 +62,21 @@ function ProviderInternal({ children, options = {} }) {
         contextsByKey[key] = context;
 
         return context;
-    }, [ resource ]);
+    }, [resource]);
 
     const cacheKey = useMemo(() => `ethos-${resource}`, []);
     const inPreviewMode = cardPrefix === 'preview:';
 
-    const [ cachedData, setCachedData ] = useState();
-    const [ enabled, setEnabled ] = useState(optionEnabled);
-    const [ queryFunction, setQueryFunction ] = useState(() => optionQueryFunction);
-    const [ queryKeys, setQueryKeys ] = useState(optionQueryKeys);
-    const [ queryParameters, setqueryParameters ] = useState(optionQueryParameters);
-    const [ isRefreshing, setIsRefreshing ] = useState(false);
-    const [ loadTimes, setLoadTimes ] = useState([]);
+    const [cachedData, setCachedData] = useState();
+    const [enabled, setEnabled] = useState(optionEnabled);
+    const [queryFunction, setQueryFunction] = useState(() => optionQueryFunction);
+    const [queryKeys, setQueryKeys] = useState(optionQueryKeys);
+    const [queryParameters, setqueryParameters] = useState(optionQueryParameters);
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [loadTimes, setLoadTimes] = useState([]);
 
     const wrappedQueryFunction = useMemo(() => {
-        return async function ({ queryKey: [ queryKeys ], signal }) {
+        return async function ({ queryKey: [queryKeys], signal }) {
             const start = new Date();
 
             const queryResult = await queryFunction({ authenticatedEthosFetch, getExtensionJwt, queryKeys, queryParameters, signal });
@@ -90,12 +90,12 @@ function ProviderInternal({ children, options = {} }) {
                     end,
                     time: end.getTime() - start.getTime()
                 })
-                setLoadTimes([ ... loadTimes ]);
+                setLoadTimes([...loadTimes]);
             }
 
             return queryResult;
         }
-    }, [, authenticatedEthosFetch, getExtensionJwt, queryFunction, queryKeys, queryParameters, resource ])
+    }, [, authenticatedEthosFetch, getExtensionJwt, queryFunction, queryKeys, queryParameters, resource])
 
     const { data: { data, error: dataError } = {}, isError, isFetching, isRefetching } = useQuery(
         [{ cardId, cardPrefix, resource, ...queryKeys }],
@@ -118,7 +118,7 @@ function ProviderInternal({ children, options = {} }) {
                 })();
             }
         }
-    }, [ cacheType, cardId, getItem, queryKeys ]);
+    }, [cacheType, cardId, getItem, queryKeys]);
 
     useEffect(() => {
         if (data) {
@@ -131,7 +131,7 @@ function ProviderInternal({ children, options = {} }) {
             // refresh has completed
             setIsRefreshing(false);
         }
-    }, [ cacheKey, data, isRefetching, isRefreshing, queryKeys, storeItem ]);
+    }, [cacheKey, data, isRefetching, isRefreshing, queryKeys, storeItem]);
 
     const contextValue = useMemo(() => {
         return {
@@ -197,10 +197,28 @@ ProviderInternal.propTypes = {
 export function DataQueryProvider(props) {
     return (
         <QueryClientProvider client={queryClient}>
-            <ProviderInternal {...props}/>
+            <ProviderInternal {...props} />
         </QueryClientProvider>
     )
 }
+
+export function MultiDataQueryProvider({ options, children }) {
+    const renderProviders = (optionsArray) => {
+        const [currentOptions, ...remainingOptions] = optionsArray;
+
+        if (currentOptions) {
+            return (
+                <DataQueryProvider options={currentOptions}>
+                    {renderProviders(remainingOptions)}
+                </DataQueryProvider>
+            );
+        }
+
+        return children;
+    };
+
+    return renderProviders(options);
+};
 
 export function useDataQuery(parameter) {
     let queryId, resource
