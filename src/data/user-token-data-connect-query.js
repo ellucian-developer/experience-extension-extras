@@ -5,11 +5,15 @@ import log from 'loglevel';
 const logger = log.getLogger('default');
 
 export async function userTokenDataConnectQuery({ authenticatedEthosFetch, queryKeys, queryParameters, signal }) {
-    const { cardId, cardPrefix, id, resource, searchParameters = {} } = queryKeys;
-    const { accept: acceptParameter, Accept: AcceptParameter, acceptVersion, ...otherQueryParameters } = queryParameters;
+    const { cardId, cardPrefix, id, resource, searchParameters = {}, body } = queryKeys;
+    const { accept: acceptParameter, Accept: AcceptParameter, acceptVersion, queryMethod = 'GET', mockData, ...otherQueryParameters } = queryParameters;
 
     if (otherQueryParameters && Object.keys(otherQueryParameters).length > 0) {
         logger.error('Unknown experienceTokenQuery queryParamaters. Please correct', JSON.stringify(otherQueryParameters, null, 2));
+    }
+
+    if (mockData) {
+        return ({ data: mockData });
     }
 
     try {
@@ -18,14 +22,6 @@ export async function userTokenDataConnectQuery({ authenticatedEthosFetch, query
         if (id) {
             resourcePath = `${resourcePath}/${id}`
         }
-
-        const urlSearchParameters = new URLSearchParams({
-            cardId,
-            cardPrefix,
-            ...searchParameters
-        }).toString();
-
-        resourcePath = `${resourcePath}?${urlSearchParameters}`
 
         if (!acceptParameter && !AcceptParameter && !acceptVersion) {
             logger.warn(`Data Connect Serverless APIs should be called with a specific 'accept' string. You can do this with either an 'accept' or 'acceptVersion' queryParameter`)
@@ -36,12 +32,41 @@ export async function userTokenDataConnectQuery({ authenticatedEthosFetch, query
                 ? `application/vnd.hedtech.integration.v${acceptVersion}+json`
                 : 'application/json';
 
-        const response = await authenticatedEthosFetch(resourcePath, {
+        const fetchOptions = {
+            method: queryMethod.toUpperCase(),
             headers: {
                 Accept: accept
             },
             signal
-        });
+        };
+
+        switch (queryMethod.toLowerCase()) {
+            case 'post':
+            case 'put':
+                {
+                    console.log('userTokenDateConnectQuery cardId:', cardId)
+                    fetchOptions.body = typeof body === 'string' ? body : JSON.stringify(body)
+                    const urlSearchParameters = new URLSearchParams({
+                        cardId,
+                        cardPrefix,
+                    }).toString();
+                    resourcePath = `${resourcePath}?${urlSearchParameters}`
+                    console.log('resourcePath:', resourcePath)
+                }
+            break;
+            case 'get':
+                {
+                    const urlSearchParameters = new URLSearchParams({
+                        cardId,
+                        cardPrefix,
+                        ...searchParameters
+                    }).toString();
+                    resourcePath = `${resourcePath}?${urlSearchParameters}`
+                }
+            break;
+        }
+
+        const response = await authenticatedEthosFetch(resourcePath, fetchOptions);
 
         let result;
         if (response) {
