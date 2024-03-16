@@ -6,10 +6,14 @@ const logger = log.getLogger('default');
 
 export async function userTokenDataConnectQuery({ authenticatedEthosFetch, queryKeys, queryParameters, signal }) {
     const { cardId, cardPrefix, id, resource, searchParameters = {}, body } = queryKeys;
-    const { accept: acceptParameter, Accept: AcceptParameter, acceptVersion, queryMethod = 'GET', ...otherQueryParameters } = queryParameters;
+    const { accept: acceptParameter, Accept: AcceptParameter, acceptVersion, queryMethod = 'GET', mockData, ...otherQueryParameters } = queryParameters;
 
     if (otherQueryParameters && Object.keys(otherQueryParameters).length > 0) {
         logger.error('Unknown experienceTokenQuery queryParamaters. Please correct', JSON.stringify(otherQueryParameters, null, 2));
+    }
+
+    if (mockData) {
+        return ({ data: mockData });
     }
 
     try {
@@ -50,7 +54,7 @@ export async function userTokenDataConnectQuery({ authenticatedEthosFetch, query
                     console.log('resourcePath:', resourcePath)
                 }
             break;
-            case 'GET':
+            case 'get':
                 {
                     const urlSearchParameters = new URLSearchParams({
                         cardId,
@@ -61,8 +65,6 @@ export async function userTokenDataConnectQuery({ authenticatedEthosFetch, query
                 }
             break;
         }
-
-        console.log('options:', fetchOptions);
 
         const response = await authenticatedEthosFetch(resourcePath, fetchOptions);
 

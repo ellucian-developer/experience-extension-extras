@@ -53,17 +53,6 @@ function ProviderInternal({ children, options = {} }) {
     const { getItem, storeItem } = useCache();
     const { serverConfigContext: { cardPrefix }, cardId } = useCardInfo();
 
-    const DataQueryContext = useMemo(() => {
-        const context = createContext({});
-
-        const { queryId } = queryKeys;
-        let key = queryId ? `${resource}:${queryId}` : resource;
-
-        contextsByKey[key] = context;
-
-        return context;
-    }, [resource]);
-
     const cacheKey = useMemo(() => `ethos-${resource}`, []);
     const inPreviewMode = cardPrefix === 'preview:';
 
@@ -75,6 +64,18 @@ function ProviderInternal({ children, options = {} }) {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [loadTimes, setLoadTimes] = useState([]);
 
+    const DataQueryContext = useMemo(() => {
+        const { queryId } = queryKeys;
+        let key = queryId ? `${resource}:${queryId}` : resource;
+
+        // create if needed
+        const context = contextsByKey[key] || createContext({});
+        // make sure it is stored
+        contextsByKey[key] = context;
+
+        return context;
+    }, [queryKeys, resource]);
+
     const wrappedQueryFunction = useMemo(() => {
         return async function ({ queryKey: [queryKeys], signal }) {
             const start = new Date();
@@ -82,7 +83,9 @@ function ProviderInternal({ children, options = {} }) {
             const queryResult = await queryFunction({ authenticatedEthosFetch, getExtensionJwt, queryKeys, queryParameters, signal });
 
             const end = new Date();
-            logger.debug(`query resource \'${resource}\' time: ${end.getTime() - start.getTime()}`);
+            const { queryId } = queryKeys;
+            let key = queryId ? `${resource}:${queryId}` : resource;
+            logger.debug(`query resource key: \'${key}\' time: ${end.getTime() - start.getTime()}`);
 
             if (!signal.aborted) {
                 loadTimes.push({
@@ -169,10 +172,12 @@ function ProviderInternal({ children, options = {} }) {
     ]);
 
     useEffect(() => {
-        logger.debug(`DataQueryProvider for ${resource} mounted`);
+        const { queryId } = queryKeys;
+        let key = queryId ? `${resource}:${queryId}` : resource;
+        logger.debug(`DataQueryProvider for key: ${key} mounted`);
 
         return () => {
-            logger.debug(`DataQueryProvider for ${resource} unmounted`);
+            logger.debug(`DataQueryProvider for key ${key} unmounted`);
         }
     }, []);
 
@@ -224,7 +229,7 @@ export function useDataQuery(parameter) {
     let queryId, resource
     if (typeof parameter === 'string') {
         resource = parameter
-    } else if (typeof parameter === 'string') {
+    } else if (typeof parameter === 'object') {
         ({ queryId, resource } = parameter);
     }
 
@@ -235,7 +240,7 @@ export function useDataQuery(parameter) {
     }
 
     let key = queryId ? `${resource}:${queryId}` : resource;
-    context = contextsByKey[key];
+    const context = contextsByKey[key];
 
     if (!context) {
         const message = `useDataQuery encountered an unknown resource key: ${key}\nPerhaps you didn't wrap with the <DataQueryProvider>`;
