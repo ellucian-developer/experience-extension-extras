@@ -119,6 +119,7 @@ function AccountDetailsWithProviders() {
 
     const options = {
         queryFunction: experienceTokenQuery,
+        queryParameters: { serviceUrl },
     };
 
     const config = [
