@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 // Copyright 2021-2023 Ellucian Company L.P. and its affiliates.
 
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
@@ -66,7 +67,7 @@ function ProviderInternal({ children, options = {} }) {
 
     const DataQueryContext = useMemo(() => {
         const { queryId } = queryKeys;
-        let key = queryId ? `${resource}:${queryId}` : resource;
+        const key = queryId ? `${resource}:${queryId}` : resource;
 
         // create if needed
         const context = contextsByKey[key] || createContext({});
@@ -84,8 +85,8 @@ function ProviderInternal({ children, options = {} }) {
 
             const end = new Date();
             const { queryId } = queryKeys;
-            let key = queryId ? `${resource}:${queryId}` : resource;
-            logger.debug(`query resource key: \'${key}\' time: ${end.getTime() - start.getTime()}`);
+            const key = queryId ? `${resource}:${queryId}` : resource;
+            logger.debug(`query resource key: '${key}' time: ${end.getTime() - start.getTime()}`);
 
             if (!signal.aborted) {
                 loadTimes.push({
@@ -98,7 +99,7 @@ function ProviderInternal({ children, options = {} }) {
 
             return queryResult;
         }
-    }, [, authenticatedEthosFetch, getExtensionJwt, queryFunction, queryKeys, queryParameters, resource])
+    }, [authenticatedEthosFetch, getExtensionJwt, queryFunction, queryKeys, queryParameters, resource])
 
     const { data: { data, error: dataError } = {}, isError, isFetching, isRefetching } = useQuery(
         [{ cardId, cardPrefix, resource, ...queryKeys }],
@@ -114,7 +115,7 @@ function ProviderInternal({ children, options = {} }) {
         if (cardId) {
             if (cacheType === cacheTypes.SDK) {
                 (async () => {
-                    let { data } = await Promise.resolve(getItem({ key: buildKey(cacheKey, queryKeys), scope: cardId })) || {};
+                    const { data } = await Promise.resolve(getItem({ key: buildKey(cacheKey, queryKeys), scope: cardId })) || {};
                     if (data) {
                         setCachedData(data);
                     }
@@ -173,7 +174,7 @@ function ProviderInternal({ children, options = {} }) {
 
     useEffect(() => {
         const { queryId } = queryKeys;
-        let key = queryId ? `${resource}:${queryId}` : resource;
+        const key = queryId ? `${resource}:${queryId}` : resource;
         logger.debug(`DataQueryProvider for key: ${key} mounted`);
 
         return () => {
@@ -223,7 +224,7 @@ export function MultiDataQueryProvider({ options, children }) {
     };
 
     return renderProviders(options);
-};
+}
 
 export function useDataQuery(parameter) {
     let queryId, resource
@@ -239,7 +240,7 @@ export function useDataQuery(parameter) {
         throw new Error(message);
     }
 
-    let key = queryId ? `${resource}:${queryId}` : resource;
+    const key = queryId ? `${resource}:${queryId}` : resource;
     const context = contextsByKey[key];
 
     if (!context) {
