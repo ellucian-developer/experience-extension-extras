@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","names":[],"sources":["../../../src/components/index.js"],"sourcesContent":["// Copyright 2021-2023 Ellucian Company L.P. and its affiliates.\n\nexport * from './data-query.js';\n"],"mappings":"AAAA;;AAEA,cAAc,iBAAiB","ignoreList":[]}

@@ -1,45 +1,59 @@
 {
   "name": "@ellucian/experience-extension-extras",
-  "version": "1.2.0",
+  "version": "8.0.0",
   "description": "Experience Extension extra Components and utilities",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.3.0"
+    "node": ">=22"
   },
-  "main": "lib/index.js",
+  "main": "lib/cjs/index.js",
+  "module": "lib/esm/index.js",
+  "types": "lib/types/index.d.ts",
+  "source": "src/index.js",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "import": "./lib/esm/index.js",
+      "require": "./lib/cjs/index.js",
+      "default": "./lib/cjs/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
-    "lib"
+    "lib",
+    "src",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
-    "build": "webpack --progress"
+    "clean": "rm -rf lib",
+    "build:cjs": "babel src --out-dir lib/cjs --source-maps --extensions '.js,.jsx'",
+    "build:esm": "BABEL_ENV=esm babel src --out-dir lib/esm --source-maps --extensions '.js,.jsx'",
+    "build:types": "tsc",
+    "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:types",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@tanstack/react-query": "^4.29.25",
-    "http-status-codes": "^2.1.4",
-    "jsonwebtoken": "^9.0.0",
-    "jwt-decode": "^3.1.2",
-    "loglevel": "^1.8.1",
-    "prop-types": "15.7.2"
+    "@tanstack/react-query": "5.90.21",
+    "http-status-codes": "2.3.0",
+    "jsonwebtoken": "9.0.3",
+    "jwt-decode": "4.0.0",
+    "loglevel": "1.9.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.22.9",
-    "@babel/core": "7.12.3",
-    "@babel/eslint-parser": "7.17.0",
-    "@babel/plugin-transform-runtime": "7.12.1",
-    "@babel/preset-env": "7.12.1",
-    "@babel/preset-react": "7.12.1",
-    "@babel/runtime": "7.12.1",
-    "babel-loader": "8.2.5",
-    "clean-webpack-plugin": "^4.0.0",
-    "eslint": "^8.32.0",
-    "webpack": "5.76.1",
-    "webpack-cli": "4.10.0",
-    "webpack-node-externals": "^3.0.0"
+    "@babel/cli": "7.28.6",
+    "@babel/core": "7.29.0",
+    "@babel/plugin-transform-runtime": "7.29.0",
+    "@babel/preset-env": "7.29.0",
+    "@babel/preset-react": "7.28.5",
+    "@babel/runtime": "7.28.6",
+    "@eslint/js": "10.0.1",
+    "@types/react": "19.2.14",
+    "eslint": "10.0.2",
+    "typescript": "5.9.3"
   },
   "peerDependencies": {
     "@ellucian/experience-extension-utils": "https://cdn.elluciancloud.com/assets/SDK/utils/1.0.0/ellucian-experience-extension-utils-1.0.0.tgz",
-    "prop-types": "15.7.2",
-    "react": "17.0.2"
+    "react": "19.0.3"
   }
 }

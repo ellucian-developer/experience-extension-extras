@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    /* Type Generation */
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "outDir": "lib/types",
+    
+    /* JavaScript Support */
+    "allowJs": true,
+    "checkJs": false,
+    "maxNodeModuleJsDepth": 0,
+    
+    /* Module Resolution */
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    
+    /* React */
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    
+    /* Strictness (for better inference) */
+    "strict": false,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    
+    /* Target */
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    
+    /* Other */
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "lib",
+    "**/*.test.js",
+    "**/*.test.jsx"
+  ]
+}

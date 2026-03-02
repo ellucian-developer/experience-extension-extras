@@ -1,7 +1,6 @@
 // Copyright 2021-2023 Ellucian Company L.P. and its affiliates.
 
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 
@@ -100,15 +99,13 @@ function ProviderInternal({ children, options = {} }) {
         }
     }, [authenticatedEthosFetch, getExtensionJwt, queryFunction, queryKeys, queryParameters, resource])
 
-    const { data: { data, error: dataError } = {}, isError, isFetching, isRefetching } = useQuery(
-        [{ cardId, cardPrefix, resource, ...queryKeys }],
-        wrappedQueryFunction,
-        {
-            enabled: Boolean(queryFunction && enabled),
-            placeholderData: { data: cachedData },
-            refetchOnWindowFocus: false
-        }
-    );
+    const { data: { data, error: dataError } = {}, isError, isFetching, isRefetching } = useQuery({
+        queryKey: [{ cardId, cardPrefix, resource, ...queryKeys }],
+        queryFn: wrappedQueryFunction,
+        enabled: Boolean(queryFunction && enabled),
+        placeholderData: { data: cachedData },
+        refetchOnWindowFocus: false
+    });
 
     useEffect(() => {
         if (cardId) {
@@ -146,7 +143,9 @@ function ProviderInternal({ children, options = {} }) {
             isRefreshing,
             loadTimes,
             refresh: () => {
-                queryClient.invalidateQueries(resource);
+                queryClient.invalidateQueries({ 
+                    predicate: (query) => query.queryKey[0]?.resource === resource 
+                });
                 setIsRefreshing(true);
             },
             setEnabled: (enabled = true) => setEnabled(enabled),
@@ -192,11 +191,6 @@ function ProviderInternal({ children, options = {} }) {
             {children}
         </DataQueryContext.Provider>
     )
-}
-
-ProviderInternal.propTypes = {
-    children: PropTypes.object.isRequired,
-    options: PropTypes.object.isRequired
 }
 
 export function DataQueryProvider(props) {

@@ -3,6 +3,7 @@
 This repository is a collection of Experience Components, Hooks, and Data Query functions to aid in the creation of Experience Extensions.
 
 - [Install](#install)
+- [Requirements](#requirements)
 - [Components and Hooks](#components-and-hooks)
 - [Data Query Functions](#data-query-functions)
 
@@ -11,6 +12,21 @@ This repository is a collection of Experience Components, Hooks, and Data Query 
 ```
 npm install git+https://github.com/ellucian-developer/experience-extension-extras.git
 ```
+
+## Requirements
+
+- **React**: 19.x
+- **@tanstack/react-query**: 5.90+
+- **Node.js**: 22+
+
+### Module Formats
+
+This package provides dual-format builds:
+- **CommonJS** (`lib/cjs/`) - for legacy Node.js and bundlers
+- **ESM** (`lib/esm/`) - for modern bundlers with tree-shaking support
+- **TypeScript definitions** (`lib/types/`) - for TypeScript projects
+
+The correct format is automatically selected based on your project configuration.
 ## Components and Hooks
 
 - [Data Query Provider](#data-query-provider)
@@ -80,7 +96,7 @@ function AccountDetailsWithProviders() {
 export default withIntl(AccountDetailsWithProviders);
 ```
 
-DataQueryProvider uses react-query to manage the calls to your API. To use DataQueryProvider, you must wrap your card and page with this Provider component, passing it an options property.
+DataQueryProvider uses @tanstack/react-query (v5) to manage the calls to your API. To use DataQueryProvider, you must wrap your card and page with this Provider component, passing it an options property.
 
 The options:
 
