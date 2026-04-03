@@ -3,7 +3,8 @@
 This repository is a collection of Experience Components, Hooks, and Data Query functions to aid in the creation of Experience Extensions.
 
 - [Install](#install)
-- [Requirements](#requirements)
+- [Dependencies](#dependencies)
+- [Module Formats](#module-formats)
 - [Components and Hooks](#components-and-hooks)
 - [Data Query Functions](#data-query-functions)
 
@@ -13,7 +14,9 @@ This repository is a collection of Experience Components, Hooks, and Data Query 
 npm install git+https://github.com/ellucian-developer/experience-extension-extras.git
 ```
 
-## Requirements
+## Dependencies
+
+Version 8 of this package now depends on the following:
 
 - **React**: 19.x
 - **@tanstack/react-query**: 5.90+
@@ -21,7 +24,7 @@ npm install git+https://github.com/ellucian-developer/experience-extension-extra
 
 ### Module Formats
 
-This package provides dual-format builds:
+This package provides dual-format builds and typescript types:
 - **CommonJS** (`lib/cjs/`) - for legacy Node.js and bundlers
 - **ESM** (`lib/esm/`) - for modern bundlers with tree-shaking support
 - **TypeScript definitions** (`lib/types/`) - for TypeScript projects

@@ -44,24 +44,35 @@ export async function userTokenDataConnectQuery({ authenticatedEthosFetch, query
             case 'post':
             case 'put':
                 {
-                    console.log('userTokenDateConnectQuery cardId:', cardId)
                     fetchOptions.body = typeof body === 'string' ? body : JSON.stringify(body)
-                    const urlSearchParameters = new URLSearchParams({
-                        cardId,
-                        cardPrefix,
-                    }).toString();
-                    resourcePath = `${resourcePath}?${urlSearchParameters}`
-                    console.log('resourcePath:', resourcePath)
+                    const params = {};
+                    if (cardId) {
+                        params.cardId = cardId;
+                    }
+                    if (cardPrefix) {
+                        params.cardPrefix = cardPrefix;
+                    }
+                    const urlSearchParameters = new URLSearchParams(params).toString();
+                    if (urlSearchParameters) {
+                        resourcePath = `${resourcePath}?${urlSearchParameters}`
+                    }
                 }
             break;
             case 'get':
                 {
-                    const urlSearchParameters = new URLSearchParams({
-                        cardId,
-                        cardPrefix,
+                    const params = {
                         ...searchParameters
-                    }).toString();
-                    resourcePath = `${resourcePath}?${urlSearchParameters}`
+                    };
+                    if (cardId) {
+                        params.cardId = cardId;
+                    }
+                    if (cardPrefix) {
+                        params.cardPrefix = cardPrefix;
+                    }
+                    const urlSearchParameters = new URLSearchParams(params).toString();
+                    if (urlSearchParameters) {
+                        resourcePath = `${resourcePath}?${urlSearchParameters}`
+                    }
                 }
             break;
         }
