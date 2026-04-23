@@ -1,10 +1,10 @@
 {
   "name": "@ellucian/experience-extension-extras",
-  "version": "8.0.1",
+  "version": "8.1.0",
   "description": "Experience Extension extra Components and utilities",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
@@ -53,7 +53,7 @@
     "typescript": "5.9.3"
   },
   "peerDependencies": {
-    "@ellucian/experience-extension-utils": "https://cdn.elluciancloud.com/assets/SDK/utils/1.0.0/ellucian-experience-extension-utils-1.0.0.tgz",
+    "@ellucian/experience-extension-utils": "https://cdn.elluciancloud.com/assets/SDK/utils/1.1.0/ellucian-experience-extension-utils-1.1.0.tgz",
     "react": "19.0.3"
   }
 }
